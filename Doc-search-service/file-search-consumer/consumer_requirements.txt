@@ -1,0 +1,31 @@
+tqdm==4.67.1
+uvicorn==0.32.1
+pydantic == 2.11.7
+fastapi==0.115.5
+requests==2.32.3
+nest-asyncio == 1.6.0
+llama-index == 0.12.52
+pydantic-settings == 2.10.1
+llama-index-vector-stores-mongodb==0.6.0
+lxml==5.3.0
+pymongo == 4.13.2
+pillow==11.0.0
+pytest==8.3.3
+pytest-asyncio==0.24.0
+memory-profiler==0.61.0 
+line_profiler==4.2.0
+python-dotenv==1.0.1
+grpcio==1.68.1
+grpcio-tools==1.68.1
+nltk==3.9.1
+aio-pika==9.5.4
+redis==5.2.1
+wheel==0.45.1
+pylatexenc==2.10
+cryptography==45.0.5
+packages/ameya_dataprocessing_core-0.0.21-py3-none-any.whl
+packages/ameya_parser_csv-0.1.0b1-py3-none-any.whl
+packages/ameya_parser_doc-0.1.0b1-py3-none-any.whl
+packages/ameya_parser_pdf-0.1.0b1-py3-none-any.whl
+packages/ameya_parser_txt-0.1.0b1-py3-none-any.whl
+packages/ameya_parser_excel-0.1.0b1-py3-none-any.whl
