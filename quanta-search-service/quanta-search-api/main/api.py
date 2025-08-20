@@ -41,4 +41,4 @@ async def check_api_status():
     return {"status": "healthy"}
 
 
-app.mount("/docsearch/v1", sub_app)
+app.mount("/quantasearch/v1", sub_app)
