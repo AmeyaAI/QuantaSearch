@@ -1,6 +1,5 @@
 # QuantaSearch
 QuantaSearch is a powerful document search library with support for word, excel, pdf and OCR document types.
-https://github.com/AmeyaAI/QuantaSearch.git
 
 ![License](https://img.shields.io/github/license/AmeyaAI/QuantaSearch.git) ![Build Status](https://img.shields.io/github/actions/workflow/status/AmeyaAI/QuantaSearch.git/ci.yml?branch=main) ![Version](https://img.shields.io/github/v/release/AmeyaAI/QuantaSearch.git) ![Python](https://img.shields.io/badge/python-3.10+-blue) ![FastAPI](https://img.shields.io/badge/FastAPI-0.115.5-green)
 
