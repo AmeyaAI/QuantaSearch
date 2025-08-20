@@ -110,10 +110,25 @@ For detailed environment variable descriptions, default values, and advanced con
 # Clone the repository
 git clone https://github.com/AmeyaAI/QuantaSearch
 cd QuantaSearch
-
-# Run all services
-docker compose up -d
 ```
+### Build and Start Services
+```bash
+docker compose up -d --build
+```
+This command builds the images (if needed) and starts all services in detached mode.
+
+### Force a Fresh Build (no cache)
+```bash
+docker compose build --no-cache && docker compose up -d
+```
+Use this if you’ve changed dependencies (e.g., `requirements.txt`) or want to ensure a completely clean build.
+
+### Stop and Remove Services
+```bash
+docker compose down
+```
+This stops all running containers and removes them (but keeps volumes and networks unless specified otherwise).
+
 
 ➡ For full installation steps (including Docker setup for Linux, Windows, and macOS), see our [Docusaurus Installation Guide]().
 

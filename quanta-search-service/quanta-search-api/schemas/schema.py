@@ -108,8 +108,6 @@ class DraftUpload(BaseModel):
             
             if isinstance(self.document_download_url, list):
                 assert len(self.document_download_url) == len(self.document_id), "document_id and documnet_download url must be of same size."
-                
-            assert self.version_id, "version_id must not be empty."
             
         except Exception as e:
             logger.error("got document mismatch error......")
