@@ -126,7 +126,7 @@ def get_folder_size(path):
     
     try:
         if not os.path.exists(path):
-            raise OSError(f"Path does not exist: {path}")
+            return 0
         
         if os.path.isfile(path):
             return os.path.getsize(path)

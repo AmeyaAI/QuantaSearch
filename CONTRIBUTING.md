@@ -1,6 +1,6 @@
-# Contributing to Document Search Service
+# Contributing to QuantaSearch Service
 
-Thank you for your interest in contributing to this document search and retrieval platform! This guide will help you get started with contributing to the project.
+Thank you for your interest in contributing to this Quantasearch platform! This guide will help you get started with contributing to the project.
 
 ## 📋 Table of Contents
 - [Code of Conduct](#code-of-conduct)
@@ -52,7 +52,7 @@ Before contributing, ensure you have:
 
 4. **Verify Installation**
    ```bash
-   curl http://localhost:4455/docsearch/v1/user/file_upload_status_check
+   curl http://localhost:4455/quantasearch/v1/user/file_upload_status_check
    ```
 
 ## 🏗 Project Architecture
@@ -275,4 +275,4 @@ Contributors will be recognized in:
 
 ---
 
-Thank you for contributing to the Document Search Service! Your contributions help make document search and retrieval better for everyone. 🚀
+Thank you for contributing to the QuantaSearch Service! Your contributions help make document search and retrieval better for everyone. 🚀

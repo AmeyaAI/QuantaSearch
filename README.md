@@ -1,7 +1,7 @@
 # QuantaSearch
 QuantaSearch is a powerful document search library with support for word, excel, pdf and OCR document types.
 
-![License](https://img.shields.io/github/license/AmeyaAI/QuantaSearch.git) ![Build Status](https://img.shields.io/github/actions/workflow/status/AmeyaAI/QuantaSearch.git/ci.yml?branch=main) ![Version](https://img.shields.io/github/v/release/AmeyaAI/QuantaSearch.git) ![Python](https://img.shields.io/badge/python-3.10+-blue) ![FastAPI](https://img.shields.io/badge/FastAPI-0.115.5-green)
+![License](https://img.shields.io/github/license/AmeyaAI/QuantaSearch.svg)  ![Version](https://img.shields.io/github/v/release/AmeyaAI/QuantaSearch.svg) ![Python](https://img.shields.io/badge/python-3.10+-blue) ![FastAPI](https://img.shields.io/badge/FastAPI-0.115.5-green)
 
 ---
 
@@ -108,12 +108,27 @@ For detailed environment variable descriptions, default values, and advanced con
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/your-repo.git
-cd your-repo
-
-# Run all services
-docker compose up -d
+git clone https://github.com/AmeyaAI/QuantaSearch
+cd QuantaSearch
 ```
+### Build and Start Services
+```bash
+docker compose up -d --build
+```
+This command builds the images (if needed) and starts all services in detached mode.
+
+### Force a Fresh Build (no cache)
+```bash
+docker compose build --no-cache && docker compose up -d
+```
+Use this if you’ve changed dependencies (e.g., `requirements.txt`) or want to ensure a completely clean build.
+
+### Stop and Remove Services
+```bash
+docker compose down
+```
+This stops all running containers and removes them (but keeps volumes and networks unless specified otherwise).
+
 
 ➡ For full installation steps (including Docker setup for Linux, Windows, and macOS), see our [Docusaurus Installation Guide]().
 
@@ -127,7 +142,7 @@ Example:
 import requests
 import json
 
-BASE_URL = "http://localhost:4455/docsearch/v1"
+BASE_URL = "http://localhost:4455/quantasearch/v1"
 headers = {"Content-Type": "application/json"}
 
 upload_data = {
@@ -150,7 +165,7 @@ print(f"Upload Status: {response.json()}")
 import requests
 import json
 
-BASE_URL = "http://localhost:4455/docsearch/v1"
+BASE_URL = "http://localhost:4455/quantasearch/v1"
 headers = {"Content-Type": "application/json"}
 
 status_response = requests.get(f"{BASE_URL}/user/file_upload_status_check", 
@@ -165,7 +180,7 @@ print(f"Processing Status: {status_response.json()}")
 import requests
 import json
 
-BASE_URL = "http://localhost:4455/docsearch/v1"
+BASE_URL = "http://localhost:4455/quantasearch/v1"
 headers = {"Content-Type": "application/json"}
 
 search_data = {
@@ -192,7 +207,7 @@ for doc in results.get('result', []):
 import requests
 import json
 
-BASE_URL = "http://localhost:4455/docsearch/v1"
+BASE_URL = "http://localhost:4455/quantasearch/v1"
 headers = {"Content-Type": "application/json"}
 
 preview_data = {
@@ -232,15 +247,15 @@ For complete API reference and advanced examples, see our [Docusaurus Documentat
 ## 📡 API / Endpoints
 | Method | Endpoint         | Description         |
 |--------|------------------|---------------------|
-| GET    | `/docsearch/v1/user/file_upload_status_check`    | Check the processing status of uploaded documents.|
-| GET    | `/docsearch/v1/platform/get_document_count_meta` | Get aggregated statistics about user documents.|
-| POST   | `/docsearch/v1/user/upload_draft`     | Upload documents in draft state for processing without making them searchable.|
-| POST   | `/docsearch/v1/user/upload_publish`     | Upload and immediately publish documents for searching.|
-| POST   | `/docsearch/v1/user/search`     | Search through published documents with customizable matching modes.|
-| POST   | `/docsearch/v1/user/search_preview`     | Get detailed preview of search matches within a specific document.|
-| POST   | `/docsearch/v1/user/revert_published_version`     | Change the active version of a published document.|
-| POST   | `/docsearch/v1/user/archive_document`     | Archive or delete documents and their versions.|
-| POST   | `/docsearch/v1/platform/list_files`     | Retrieve all documents for a user with filtering options.|
+| GET    | `/quantasearch/v1/user/file_upload_status_check`    | Check the processing status of uploaded documents.|
+| GET    | `/quantasearch/v1/platform/get_document_count_meta` | Get aggregated statistics about user documents.|
+| POST   | `/quantasearch/v1/user/upload_draft`     | Upload documents in draft state for processing without making them searchable.|
+| POST   | `/quantasearch/v1/user/upload_publish`     | Upload and immediately publish documents for searching.|
+| POST   | `/quantasearch/v1/user/search`     | Search through published documents with customizable matching modes.|
+| POST   | `/quantasearch/v1/user/search_preview`     | Get detailed preview of search matches within a specific document.|
+| POST   | `/quantasearch/v1/user/revert_published_version`     | Change the active version of a published document.|
+| POST   | `/quantasearch/v1/user/archive_document`     | Archive or delete documents and their versions.|
+| POST   | `/quantasearch/v1/platform/list_files`     | Retrieve all documents for a user with filtering options.|
 
 For complete API reference and examples, see our [Docusaurus Documentation]().
 

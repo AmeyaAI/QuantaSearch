@@ -8,10 +8,10 @@ os.environ["LOAD_EASYOCR"] = "true"
 
 class ENV(BaseSettings):
 
-    RABBIT_HOST:str = os.getenv("RABBIT_HOST", "file_search_rabbitmq")
+    RABBIT_HOST:str = os.getenv("RABBIT_HOST", "quanta_search_rabbitmq")
     RABBIT_PORT:int = int(os.getenv("RABBIT_PORT", 5672)) or 5672
     
-    REDIS_HOST:str = os.getenv("REDIS_HOST", "file_search_redis")
+    REDIS_HOST:str = os.getenv("REDIS_HOST", "quanta_search_redis")
     REDIS_PORT:int = int(os.getenv("REDIS_PORT", 6379)) or 6379
     
     MONGODB_URI:str = os.getenv("MONGODB_URI")
