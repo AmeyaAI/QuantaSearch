@@ -23,7 +23,7 @@ We are committed to providing a welcoming and inclusive environment for all cont
 ### Prerequisites
 
 Before contributing, ensure you have:
-- Python >= 3.9
+- Python >= 3.10
 - Docker and Docker Compose
 - Git
 - A MongoDB Atlas account (for database features)
@@ -52,7 +52,7 @@ Before contributing, ensure you have:
 
 4. **Verify Installation**
    ```bash
-   curl http://localhost:8000/docsearch/v1/user/file_upload_status_check
+   curl http://localhost:4455/docsearch/v1/user/file_upload_status_check
    ```
 
 ## 🏗 Project Architecture
@@ -68,7 +68,7 @@ Before contributing, ensure you have:
 
 ### Key Technologies
 
-- **Backend**: Python 3.9+, FastAPI 0.115.5
+- **Backend**: Python 3.10+, FastAPI 0.115.5
 - **Document Processing**: EasyOCR, Ameya DataProcessing, NLTK
 - **Search**: LlamaIndex 0.12.17, Fast Inverted Index
 - **Infrastructure**: MongoDB, Redis, RabbitMQ, Docker
