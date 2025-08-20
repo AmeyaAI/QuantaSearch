@@ -1,8 +1,8 @@
 # QuantaSearch
 QuantaSearch is a powerful document search library with support for word, excel, pdf and OCR document types.
+https://github.com/AmeyaAI/QuantaSearch.git
 
-
-![License](https://github.com/AmeyaAI/QuantaSearch.git) ![Build Status](https://github.com/AmeyaAI/QuantaSearch.git) ![Version](https://github.com/AmeyaAI/QuantaSearch.git) ![Python](https://img.shields.io/badge/python-3.10+-blue) ![FastAPI](https://img.shields.io/badge/FastAPI-0.115.5-green)
+![License](https://img.shields.io/github/license/AmeyaAI/QuantaSearch.git) ![Build Status](https://img.shields.io/github/actions/workflow/status/AmeyaAI/QuantaSearch.git/ci.yml?branch=main) ![Version](https://img.shields.io/github/v/release/AmeyaAI/QuantaSearch.git) ![Python](https://img.shields.io/badge/python-3.10+-blue) ![FastAPI](https://img.shields.io/badge/FastAPI-0.115.5-green)
 
 ---
 
@@ -260,7 +260,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 ---
 
 ## 📄 License
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **Apache License 2.0** - see the [LICENSE](LICENSE) file for more details.
 
 ---
 
@@ -271,8 +271,3 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 - [Fast-inverted-index](https://github.com/lakshminarasimmanv/fast-inverted-index-docs) - High-performance Indexing Engine
 - [EasyOCR](https://github.com/JaidedAI/EasyOCR?tab=readme-ov-file) - Optical Character Recognition Engine
 ---
-
-## 📬 Contact
-Your Name – [@TwitterHandle](https://twitter.com/yourhandle) – youremail@example.com
-
-Project Link: [https://github.com/AmeyaAI/QuantaSearch.git](https://github.com/AmeyaAI/QuantaSearch.git)
