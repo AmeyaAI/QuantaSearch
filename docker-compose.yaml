@@ -3,7 +3,7 @@ services:
   doc-search-service:
     container_name: doc-search-service_opensource
     build:
-      context: ./Doc-search-service/file-search-api
+      context: ./quanta-search-service/quanta-search-api
       dockerfile: doc-api.Dockerfile
     
     user: root
@@ -13,7 +13,7 @@ services:
     
     volumes:
       - ./ameya-inverted-index:/app/ameya-inverted-index
-      - ./Doc-search-service/file-search-api/temp:/app/temp
+      - ./quanta-search-service/quanta-search-api/temp:/app/temp
       
     
     networks:
@@ -69,7 +69,7 @@ services:
 
   docsearch_consumer_opensource:
     build:
-        context: ./Doc-search-service/file-search-consumer
+        context: ./quanta-search-service/quanta-search-consumer
         dockerfile: consumer.Dockerfile
     user: root
     container_name: docsearch_consumer_opensource
@@ -84,7 +84,7 @@ services:
     
     volumes:
       - ./ameya-inverted-index:/app/ameya-inverted-index
-      - ./Doc-search-service/temp:/app/temp
+      - ./quanta-search-service/temp:/app/temp
 
     env_file:
       - ./.env
