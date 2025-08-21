@@ -15,6 +15,10 @@
 # -----------------------------------------------------------------------------
 
 
+<<<<<<< HEAD
+=======
+from typing import List
+>>>>>>> c1e0d3d (Added copyright text on each source files)
 from bisect import bisect_left, bisect_right
 from typing import List, Tuple, Optional, Union
 from concurrent.futures import ProcessPoolExecutor, as_completed
