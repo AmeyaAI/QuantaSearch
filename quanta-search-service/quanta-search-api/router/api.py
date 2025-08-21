@@ -693,7 +693,7 @@ async def archive_file(del_body: DeleteFile):
             print(f"Streaming response: {out}")
             
             if out["type"] == "error":
-                return {"error": out["data"]["error"]}
+                ret = False
             
             elif out["data"]["done"]:
                 ret = True
