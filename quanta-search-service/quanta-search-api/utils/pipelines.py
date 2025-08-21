@@ -17,60 +17,12 @@
 =======
 
 
-from utils.load_envs import env
-
-async def load_get_list_pipeline(uid: str) -> list[dict]:
-
-    return [
-                {
-                    "$match": {
-                    "uid": uid
-                    }
-                },
-                {
-                    "$project": {
-                    "fileIds": { "$objectToArray": "$files" }
-                    }
-                },
-                {
-                    "$unwind": "$fileIds"
-                },
-                {
-                    "$lookup": {
-                    "from": env.MONGO_VDB_COLLECTION_NAME,
-                    "let": { "doc_id": "$fileIds.k" },
-                    "pipeline": [
-                        {
-                        "$match": {
-                            "$expr": {
-                            "$eq": ["$metadata.document_id", "$$doc_id"]
-                            }
-                        }
-                        },
-                        {"$limit": 1}
-                    ],
-                    "as": "vectorData"
-                    }
-                },
-                {
-                    "$match": {
-                    "vectorData": { "$ne": [] }
-                    }
-                },
-                {
-                    "$project": {
-                    "_id": 0,
-                    "file_name": { "$arrayElemAt": ["$vectorData.metadata.file_name", 0] },
-                    "uploaded_date": { "$arrayElemAt": ["$vectorData.metadata.uploaded_date", 0] },
-                    "published_date": { "$arrayElemAt": ["$vectorData.metadata.published_date", 0] },
-                    "version_change_date": { "$arrayElemAt": ["$vectorData.metadata.version_change_date", 0] },
-                    "file_id": "$fileIds.k",
-                    "versions": "$fileIds.v.versions",
-                    "current_version": "$fileIds.v.current_version"
-                    }
-                }
-            ]
+async def get_insertable_data_pipeline(uid:str, realm:dict) -> list[dict]:
+    """
+    Creates pipeline to find user collection documents that have
+    less than 50 files (space for more insertions).
     
+<<<<<<< HEAD
     
     
 async def load_vector_pipeline(vectotr_index_name:str, query_embed:list[float], filters:tuple, top_k:int,
@@ -264,6 +216,8 @@ async def get_insertable_data_pipeline(uid:str, realm:dict) -> list[dict]:
     Creates pipeline to find user collection documents that have
     less than 50 files (space for more insertions).
     
+=======
+>>>>>>> 8d43691 (Updated docstrings in every funcs)
     Args:
         uid (str): User identifier
         realm (dict): Realm filter parameters
