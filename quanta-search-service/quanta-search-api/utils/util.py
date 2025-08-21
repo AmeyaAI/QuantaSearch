@@ -15,6 +15,10 @@
 # -----------------------------------------------------------------------------
 
 
+<<<<<<< HEAD
+=======
+import re
+>>>>>>> c1e0d3d (Added copyright text on each source files)
 import math
 import json
 import asyncio
