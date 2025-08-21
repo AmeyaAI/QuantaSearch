@@ -28,6 +28,20 @@ from utils.pipelines import get_insertable_data_pipeline
 
 
 def add_metadata(doc:Document, ev:Any) -> Document:
+    """
+    Add comprehensive system metadata to a document object.
+    
+    Enriches document with user information, version details, realm data, processing state,
+    and other system metadata. Prepends filename to document text content.
+    
+    Args:
+        doc (Document): LlamaIndex Document object to enrich
+        ev (Any): Event object containing metadata information
+        
+    Returns:
+        Document: Document with added metadata and updated text content
+    """
+    
     metadatas = {"datasource_type" : 'File Source',
                  "datasource_status" : 'active',
                  "uid" : ev.uid,
@@ -57,7 +71,23 @@ def add_metadata(doc:Document, ev:Any) -> Document:
 
 
 
-async def get_doc_lt_version(collection:AsyncCollection, uid:str, realm:dict, doc_id:str) -> tuple[list, list]: 
+async def get_doc_lt_version(collection:AsyncCollection, uid:str, realm:dict, doc_id:str) -> tuple[list, list]:
+    """
+    Retrieve current version and available versions for a document.
+    
+    Queries user collection to get version information for document management,
+    validation, and version control operations.
+    
+    Args:
+        collection (AsyncCollection): MongoDB user collection reference
+        uid (str): User identifier
+        realm (dict): Realm filter parameters
+        doc_id (str): Document identifier
+        
+    Returns:
+        tuple[list, list]: (current_version, available_versions) or ([], []) if not found
+    """
+     
     data = await collection.find_one({"uid": uid, "realm":realm, f"files.{doc_id}": {"$exists":True}})
 
     try:
@@ -69,6 +99,21 @@ async def get_doc_lt_version(collection:AsyncCollection, uid:str, realm:dict, do
 
 
 async def check_realm_keys(collection:AsyncCollection, uid:str, realm:dict, upload:bool) -> bool:
+    """
+    Validate realm keys against user's registered realm configuration.
+    
+    Ensures provided realm keys match the user's configured realm keys
+    for data consistency and access control validation.
+    
+    Args:
+        collection (AsyncCollection): MongoDB user collection reference
+        uid (str): User identifier
+        realm (dict): Realm parameters to validate
+        upload (bool): Whether this is for upload operation context
+        
+    Returns:
+        bool: True if realm keys are valid, False otherwise
+    """
     
     data = await collection.find_one({"uid":uid, "realm":realm})
     rlm_keys = list(realm.keys())
@@ -80,6 +125,22 @@ async def check_realm_keys(collection:AsyncCollection, uid:str, realm:dict, uplo
     
     
 async def get_file_upload_date(collection:AsyncCollection, doc_id:str, uid:str, realm:dict) -> str | int:
+    """
+    Retrieve the original upload date for a specific document.
+    
+    Queries vector store metadata to get the document's upload timestamp
+    for date tracking and display purposes.
+    
+    Args:
+        collection (AsyncCollection): MongoDB vector store collection reference
+        doc_id (str): Document identifier
+        uid (str): User identifier
+        realm (dict): Realm filter parameters
+        
+    Returns:
+        str | int: Upload date as string or timestamp, empty string if not found
+    """
+    
     data = await collection.find_one({"metadata.uid": uid, "metadata.realm": realm,
                                       "metadata.document_id": doc_id, 
                                       })
@@ -92,18 +153,59 @@ async def get_file_upload_date(collection:AsyncCollection, doc_id:str, uid:str, 
     
 
 async def get_total_doc(uid:str) -> int:
+    """
+    Get the total number of vector documents for a user.
+    
+    Retrieves cached document count from user collection for scaling
+    and performance optimization purposes.
+    
+    Args:
+        uid (str): User identifier
+        
+    Returns:
+        int: Total number of vector documents, 0 if not found
+    """
+    
     doc = await db.user_collection.find_one({"uid": uid})
     tc_doc = doc if doc else {}
     return tc_doc.get("total_vdocs", 0)
 
 
-async def get_insertable_data(uid:str, realm:dict):
+async def get_insertable_data(uid:str, realm:dict) -> dict:
+    """
+    Find user collection document with available space for new file entries.
+    
+    Executes aggregation pipeline to identify user documents that can accommodate
+    additional file entries without exceeding the 50-file limit.
+    
+    Args:
+        uid (str): User identifier
+        realm (dict): Realm filter parameters
+        
+    Returns:
+        dict: User collection document with available space, or empty dict if none found
+    """
+    
     pipeline = await get_insertable_data_pipeline(uid=uid, realm=realm)
     data = [i async for i in await db.user_collection.aggregate(pipeline=pipeline, allowDiskUse=True)]
     return data[0] if data else {}
         
         
 async def delete_index_data(index, filter:dict):
+    """
+    Remove documents from the inverted index based on filter criteria.
+    
+    Queries vector store with filters, finds matching documents in the inverted index,
+    and removes them to maintain search index consistency.
+    
+    Args:
+        index: Fast inverted index instance
+        filter (dict): Filter criteria for documents to remove from index
+        
+    Returns:
+        None
+    """
+    
     logger.debug(f"filters : {filter}")
     ids = [i["_id"] for i in await db.vector_store.find(filter, {"_id":1}).to_list()]
     
@@ -123,7 +225,23 @@ async def delete_index_data(index, filter:dict):
     return None
 
 
-def get_folder_size(path):
+def get_folder_size(path) -> int:
+    """
+    Calculate the total size of a file or directory in bytes.
+    
+    Recursively calculates size for directories, handles individual files,
+    includes error handling for inaccessible files, and validates path existence.
+    
+    Args:
+        path (str): File or directory path to calculate size for
+        
+    Returns:
+        int: Size in bytes, 0 if path doesn't exist
+        
+    Raises:
+        RuntimeError: If path is neither file nor directory, or if calculation fails
+    """
+    
     try:
         if not os.path.exists(path):
             return 0
@@ -149,7 +267,16 @@ def get_folder_size(path):
         raise RuntimeError(f"Error calculating size for {path}: {str(e)}")
 
 
-def _get_job_data():
+def _get_job_data() -> dict:
+    """
+    Generate default job configuration for document processing.
+    
+    Creates standardized job data structure with default settings for OCR,
+    LLM, embedding, database configuration, and processing parameters.
+    
+    Returns:
+        dict: Job configuration dictionary with default values
+    """
     
     return {
             "job_id": str(uuid.uuid4()),
@@ -183,4 +310,12 @@ def _get_job_data():
 
     
 async def store_index(index_name:str):
+    """
+    Store index backup to cloud storage (placeholder implementation).
+    
+    Reserved for future implementation of cloud-based index backup functionality.
+    
+    Args:
+        index_name (str): Name of the index backup to store
+    """
     pass 
