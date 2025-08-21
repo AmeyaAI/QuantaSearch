@@ -361,7 +361,7 @@ class FileSearcherUpload(Workflow):
             backup_name = env.INDEX_BACKUP_NAME
             if index_db_size % env.INDEX_BACKUP_MAX_SIZE == 0:
                 store_index = True
-                backup_name = backup_name +"_"+ int(index_db_size / env.INDEX_BACKUP_MAX_SIZE)
+                backup_name = backup_name +"_"+ str(int(index_db_size / env.INDEX_BACKUP_MAX_SIZE))
             
             async with lock:
                 
