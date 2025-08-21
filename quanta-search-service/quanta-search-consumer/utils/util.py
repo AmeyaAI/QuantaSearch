@@ -1,3 +1,20 @@
+# -----------------------------------------------------------------------------
+# Copyright 2025 DPOD Labs Private Limited
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# -----------------------------------------------------------------------------
+
+
 import os
 import uuid
 import asyncio
@@ -11,16 +28,6 @@ from utils.pipelines import get_insertable_data_pipeline
 
 
 def add_metadata(doc:Document, ev:Any) -> Document:
-    '''Add metadata to the given Document object.
-    
-    Args:
-        - doc (Document) : The document object to add metadata.
-        - data (Any) : The datas of the user.
-    
-    Returns:
-        - Document
-    '''
-    
     metadatas = {"datasource_type" : 'File Source',
                  "datasource_status" : 'active',
                  "uid" : ev.uid,
@@ -117,13 +124,6 @@ async def delete_index_data(index, filter:dict):
 
 
 def get_folder_size(path):
-    # result = subprocess.run(['du', '-sb', path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    # if result.returncode == 0:
-    #     size_str = result.stdout.split()[0]
-    #     return int(size_str)
-    # else:
-    #     raise RuntimeError(f"Error: {result.stderr.strip()}")
-    
     try:
         if not os.path.exists(path):
             return 0
@@ -139,7 +139,6 @@ def get_folder_size(path):
                     try:
                         total_size += os.path.getsize(file_path)
                     except (OSError, IOError):
-                        # Skip files that can't be accessed (permissions, broken symlinks, etc.)
                         continue
             return total_size
         
