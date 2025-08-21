@@ -1,4 +1,4 @@
-# Contributing to QuantaSearch Service
+# Contributing to QuantaSearch
 
 Thank you for your interest in contributing to this Quantasearch platform! This guide will help you get started with contributing to the project.
 
