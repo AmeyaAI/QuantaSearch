@@ -27,6 +27,17 @@ base_score = env.BASE_SCORE
 lock = asyncio.Lock()
 
 async def index_retriver(index:Index, query:str, search_type:str) -> list:
+    """
+    Retrieve document IDs from the inverted index using different search strategies.
+    
+    Args:
+        index (Index): Fast inverted index instance
+        query (str): Search query string
+        search_type (str): Type of search - 'text_search', 'search', or 'sp_search'
+        
+    Returns:
+        list: List of document titles matching the search criteria
+    """
     
     if search_type == "text_search":
         
@@ -70,8 +81,20 @@ async def index_retriver(index:Index, query:str, search_type:str) -> list:
 async def fetch_docs_optimized(doc_ids: list, filters: dict, query:str, batch_size: int = 5000,
                                max_concurrency: int = 10, search:bool=False):
     """
-    Highly optimized version that minimizes database roundtrips
+    Highly optimized version that minimizes database roundtrips to fetch documents.
+    
+    Args:
+        doc_ids (list): List of document IDs to fetch
+        filters (dict): Database filters to apply
+        query (str): Search query for text search operations
+        batch_size (int, optional): Size of batches for processing. Defaults to 5000
+        max_concurrency (int, optional): Maximum concurrent operations. Defaults to 10
+        search (bool, optional): Whether to use text search scoring. Defaults to False
+        
+    Returns:
+        list: List of document data with relevance scores and metadata
     """
+    
     if not doc_ids and not search:
         return []
     
