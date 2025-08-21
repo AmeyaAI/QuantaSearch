@@ -35,6 +35,19 @@ class Database:
     
 
     def __new__(cls):
+        """
+        Singleton pattern implementation for Database connection.
+        
+        Creates a single instance of the database connection with MongoDB client,
+        database, and collection references. Uses threading lock for thread safety.
+        
+        Returns:
+            Database: Singleton instance of the database connection
+            
+        Raises:
+            ServerSelectionTimeoutError: If MongoDB connection times out
+            ConnectionFailure: If MongoDB connection fails
+        """
 
         try:
 
@@ -55,6 +68,19 @@ class Database:
 
     @classmethod
     async def connection_check(cls):
+        """
+        Check the status of MongoDB connection.
+        
+        Verifies if the MongoDB connection is active by running an 'ismaster' command.
+        
+        Returns:
+            str: Success message if connection is established
+            
+        Raises:
+            ConnectionFailure: If unable to connect to MongoDB
+            ServerSelectionTimeoutError: If connection times out
+        """
+    
         try:
             if cls._instance:
                 cls._instance.client.admin.command('ismaster')

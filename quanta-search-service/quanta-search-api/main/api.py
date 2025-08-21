@@ -52,6 +52,15 @@ sub_app.include_router(m_router)
 
 @sub_app.get("/health", tags=["SYSTEM"])
 async def check_api_status():
+    """
+    Health check endpoint for the API service.
+    
+    Simple endpoint to verify that the API is running and responsive.
+    
+    Returns:
+        dict: Status response indicating service health
+    """
+    
     return {"status": "healthy"}
 
 
