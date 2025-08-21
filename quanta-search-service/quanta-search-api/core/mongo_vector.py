@@ -5,6 +5,15 @@ from logger.logger import logger
 
 
 async def create_mongodb_atlas_indexes(dim:int = 768):
+    """
+    Create MongoDB Atlas search indexes including vector search, full-text search, and spatial indexes.
+    
+    Args:
+        dim (int, optional): Vector embedding dimensions. Defaults to 768
+        
+    Returns:
+        bool: True if all indexes were created successfully
+    """
 
     collection = db.vector_store
     user_collection = db.user_collection

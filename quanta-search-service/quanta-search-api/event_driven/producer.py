@@ -9,7 +9,20 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"
 
 from utils.load_envs import env
 
-async def connect():
+async def connect() -> aio_pika.Connection:
+    """
+    Establish connection to RabbitMQ with retry logic.
+    
+    Continuously attempts to connect to RabbitMQ using environment variables
+    for host and port configuration. Includes heartbeat and retry settings.
+    
+    Returns:
+        aio_pika.Connection: Established RabbitMQ connection
+        
+    Raises:
+        AMQPConnectionError: If connection fails after retries
+    """
+    
     while True:
         print("Trying to connect to RabbitMQ...")
         print(env.RABBIT_HOST)
@@ -29,7 +42,23 @@ async def connect():
             await asyncio.sleep(3)
 
 
-async def add_queue(job: dict):
+async def add_queue(job: dict) -> bool:
+    """
+    Add a job to the production document search processing queue.
+    
+    Creates a connection, declares exchange and queue, then publishes
+    the job message with routing key from the job data.
+    
+    Args:
+        job (dict): Job data containing processing parameters and route_key
+        
+    Returns:
+        bool: True if job was successfully queued
+        
+    Raises:
+        Exception: If queue operations fail
+    """
+    
     connection = await connect()
     async with connection:
         channel = await connection.channel()
@@ -47,7 +76,23 @@ async def add_queue(job: dict):
             raise e
         
 
-async def add_delete_queue(job_data:dict):
+async def add_delete_queue(job_data:dict) -> dict:
+    """
+    Add a delete job to the queue with reply mechanism for status tracking.
+    
+    Creates delete exchange, reply queue with correlation ID, and publishes
+    delete job. Sets up infrastructure for receiving status updates.
+    
+    Args:
+        job_data (dict): Delete job data containing document information and route_key
+        
+    Returns:
+        dict: Contains correlation_id and reply_queue_name for tracking
+        
+    Raises:
+        Exception: If queue operations fail
+    """
+    
     connection = await connect()
     async with connection:
         channel = await connection.channel()
@@ -79,6 +124,23 @@ async def add_delete_queue(job_data:dict):
         
 
 async def get_msg_from_reply_queue(reply_name_name: str, correlation_id:str):
+    """
+    Generator function to stream messages from a reply queue with timeout handling.
+    
+    Listens for messages on the specified reply queue matching the correlation ID.
+    Yields status updates until job completion or timeout.
+    
+    Args:
+        reply_name_name (str): Name of the reply queue
+        correlation_id (str): Unique identifier to match messages
+        
+    Yields:
+        str: Formatted JSON data strings with job status updates
+        
+    Raises:
+        Exception: If queue access fails
+    """
+    
     connection = None
     try:
         print(f"\n\n\n getting mesg from queue: {reply_name_name} \n\n\n")
@@ -134,6 +196,19 @@ async def get_msg_from_reply_queue(reply_name_name: str, correlation_id:str):
         
 
 async def delete_reply_queue(queue_name:str) -> bool:
+    """
+    Delete a temporary reply queue after job completion.
+    
+    Removes the specified queue to clean up resources after
+    processing is complete.
+    
+    Args:
+        queue_name (str): Name of the queue to delete
+        
+    Returns:
+        bool: True if queue was successfully deleted, False otherwise
+    """
+    
     connection = None
     try:
         print("\n\n\n deleteing queue \n\n\n")

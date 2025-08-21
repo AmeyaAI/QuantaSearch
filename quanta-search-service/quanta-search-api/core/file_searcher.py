@@ -355,6 +355,7 @@ class FileSearcherPreview(Workflow):
     
     @step(num_workers=5)
     async def get_preview(self, ctx:Context, ev:StartEvent) -> StopEvent:
+        """Generate detailed preview texts for a specific document."""
         
         try:
             logger.info(f"Started getting docs for uid : {ev.uid}")
