@@ -248,7 +248,6 @@ For more advanced examples, see our [Code Example Docs](https://support.ameya.ai
 | Method | Endpoint         | Description         |
 |--------|------------------|---------------------|
 | GET    | `/quantasearch/v1/user/file_upload_status_check`    | Check the processing status of uploaded documents.|
-| GET    | `/quantasearch/v1/platform/get_document_count_meta` | Get aggregated statistics about user documents.|
 | POST   | `/quantasearch/v1/user/upload_draft`     | Upload documents in draft state for processing without making them searchable.|
 | POST   | `/quantasearch/v1/user/upload_publish`     | Upload and immediately publish documents for searching.|
 | POST   | `/quantasearch/v1/user/search`     | Search through published documents with customizable matching modes.|
