@@ -15,16 +15,7 @@
 # -----------------------------------------------------------------------------
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 import re
->>>>>>> c1e0d3d (Added copyright text on each source files)
-=======
->>>>>>> 8d43691 (Updated docstrings in every funcs)
-=======
->>>>>>> aab2aa0 (Updated docstrings in every funcs)
 import math
 import json
 import asyncio
