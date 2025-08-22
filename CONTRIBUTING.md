@@ -252,7 +252,11 @@ Contributors will be recognized in:
 ---
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 Thank you for contributing to the QuantaSearch Service! Your contributions help make document search and retrieval better for everyone. 🚀
 =======
 Thank you for contributing to the QuantaSearch. Your contributions help make document search and retrieval better for everyone. 🚀
 >>>>>>> 33c348e (Updated CONTRIBUTING.md file)
+=======
+Thank you for contributing to the QuantaSearch. Your contributions help make document search and retrieval better for everyone. 🚀
+>>>>>>> a4fd75f8243642f6a776a094d5330956637642c1

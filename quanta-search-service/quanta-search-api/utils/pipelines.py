@@ -19,7 +19,7 @@ async def get_insertable_data_pipeline(uid:str, realm:dict) -> list[dict]:
     """
     Creates pipeline to find user collection documents that have
     less than 50 files (space for more insertions).
-
+    
     Args:
         uid (str): User identifier
         realm (dict): Realm filter parameters
