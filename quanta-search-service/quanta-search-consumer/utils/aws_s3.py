@@ -1,3 +1,20 @@
+# -----------------------------------------------------------------------------
+# Copyright 2025 DPOD Labs Private Limited
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# -----------------------------------------------------------------------------
+
+
 import os
 import hashlib
 import requests
@@ -5,7 +22,26 @@ from requests.utils import unquote
 
 
 
-async def download_from_presigned(presigned_url:list[str], uid:str, document_ids:list[str], event_id:str):
+async def download_from_presigned(presigned_url:list[str], uid:str, document_ids:list[str], event_id:str) -> tuple:
+    """
+    Download files from S3 using presigned URLs with integrity verification.
+    
+    Downloads files in parallel, calculates SHA256 checksums, validates file integrity,
+    creates temporary directory structure, and handles download errors gracefully.
+    
+    Args:
+        presigned_url (list[str]): List of S3 presigned URLs for file download
+        uid (str): User identifier for directory organization
+        document_ids (list[str]): List of document IDs corresponding to URLs
+        event_id (str): Event identifier for unique directory naming
+        
+    Returns:
+        tuple: (uploaded_files_list, file_metadata_dict) containing download results and metadata
+        
+    Raises:
+        AssertionError: If downloaded file is corrupted or has zero size
+        Exception: If download or file operations fail
+    """
 
     file_meta = {}
     cwd = os.getcwd()

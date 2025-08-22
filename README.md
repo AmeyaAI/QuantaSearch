@@ -101,7 +101,7 @@ Or create a `.env` file:
 MONGODB_URI= <SRV foramt uri>
 ```
 
-For detailed environment variable descriptions, default values, and advanced configuration examples, see the [Docusaurus Configuration Documentation]().
+For detailed environment variable descriptions, default values, and advanced configuration examples, see our [Configuration Docs](https://support.ameya.ai/docs/dev-docs/QuantaSearch-update/configuration).
 
 
 ### Clone & Run with Docker Compose
@@ -130,7 +130,7 @@ docker compose down
 This stops all running containers and removes them (but keeps volumes and networks unless specified otherwise).
 
 
-➡ For full installation steps (including Docker setup for Linux, Windows, and macOS), see our [Docusaurus Installation Guide]().
+➡ For full installation steps (including Docker setup for Linux, Windows, and macOS), see our [Installation Guide](https://support.ameya.ai/docs/dev-docs/QuantaSearch-update/installation).
 
 ---
 
@@ -240,7 +240,7 @@ for page in preview.get('preview', []):
 > - If you change the folder path, remember to update the corresponding path in the **`docker-compose.yml`** file to maintain consistency.
 
 
-For complete API reference and advanced examples, see our [Docusaurus Documentation]().
+For more advanced examples, see our [Code Example Docs](https://support.ameya.ai/docs/dev-docs/QuantaSearch-update/code-examples).
 
 ---
 
@@ -248,7 +248,6 @@ For complete API reference and advanced examples, see our [Docusaurus Documentat
 | Method | Endpoint         | Description         |
 |--------|------------------|---------------------|
 | GET    | `/quantasearch/v1/user/file_upload_status_check`    | Check the processing status of uploaded documents.|
-| GET    | `/quantasearch/v1/platform/get_document_count_meta` | Get aggregated statistics about user documents.|
 | POST   | `/quantasearch/v1/user/upload_draft`     | Upload documents in draft state for processing without making them searchable.|
 | POST   | `/quantasearch/v1/user/upload_publish`     | Upload and immediately publish documents for searching.|
 | POST   | `/quantasearch/v1/user/search`     | Search through published documents with customizable matching modes.|
@@ -257,7 +256,7 @@ For complete API reference and advanced examples, see our [Docusaurus Documentat
 | POST   | `/quantasearch/v1/user/archive_document`     | Archive or delete documents and their versions.|
 | POST   | `/quantasearch/v1/platform/list_files`     | Retrieve all documents for a user with filtering options.|
 
-For complete API reference and examples, see our [Docusaurus Documentation]().
+For complete API reference and examples, see our [Api Docs](https://support.ameya.ai/docs/api-QuantaSearch-update/fastapi).
 
 ---
 

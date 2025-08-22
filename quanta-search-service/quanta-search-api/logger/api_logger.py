@@ -1,3 +1,20 @@
+# -----------------------------------------------------------------------------
+# Copyright 2025 DPOD Labs Private Limited
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# -----------------------------------------------------------------------------
+
+
 import os
 import logging
 from utils.load_envs import env
@@ -6,6 +23,16 @@ from utils.load_envs import env
 class Logging:
     _instance = None
     def __new__(cls):
+        """
+        Singleton pattern implementation for API logging.
+        
+        Creates a single logging instance with file handler pointing to
+        'temp/logs/file_search_manager_api_app.log' with DEBUG level
+        and formatted output.
+        
+        Returns:
+            Logging: Singleton instance of the logger
+        """
 
         if cls._instance is None:
             cls._instance = super().__new__(cls)
@@ -19,18 +46,48 @@ class Logging:
         return cls._instance
     
     def info(self,message):
+        """
+        Log an info level message.
+        
+        Args:
+            message (str): Message to log at info level
+        """
         self.logger.info(message)
 
     def warning(self,message):
+        """
+        Log a warning level message.
+        
+        Args:
+            message (str): Message to log at warning level
+        """
         self.logger.warning(message)
 
     def error(self,message):
+        """
+        Log an error level message.
+        
+        Args:
+            message (str): Message to log at error level
+        """
         self.logger.error(message)
 
     def exception(self,message):
+        """
+        Log an exception with full traceback information.
+        
+        Args:
+            message (str): Message to log with exception details
+        """
         self.logger.exception(message)
     
     def debug(self,message):
+        """
+        Log a debug level message.
+        
+        Args:
+            message (str): Message to log at debug level
+        """
         self.logger.debug(message)
 
 

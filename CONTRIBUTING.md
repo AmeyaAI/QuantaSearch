@@ -8,7 +8,6 @@ Thank you for your interest in contributing to this Quantasearch platform! This 
 - [Development Setup](#development-setup)
 - [Project Architecture](#project-architecture)
 - [Contributing Guidelines](#contributing-guidelines)
-- [Testing](#testing)
 - [Code Style](#code-style)
 - [Submitting Changes](#submitting-changes)
 - [Issue Reporting](#issue-reporting)
@@ -32,14 +31,14 @@ Before contributing, ensure you have:
 
 1. **Fork and Clone**
    ```bash
-   git clone https://github.com/your-username/your-repo.git
-   cd your-repo
+   git clone https://github.com/AmeyaAI/QuantaSearch
+   cd QuantaSearch
    ```
 
 2. **Environment Setup**
    ```bash
    # Copy environment template
-   cp source/env.example .env
+   cp env.example .env
    
    # Edit .env with your configuration
    # Required: MONGODB_URI
@@ -93,30 +92,7 @@ Before contributing, ensure you have:
 5. **Testing**: Unit tests, integration tests, performance tests
 6. **DevOps**: CI/CD pipelines, monitoring, logging
 
-## 🧪 Testing
 
-### Running Tests
-
-```bash
-# Install test dependencies
-pip install -r requirements-dev.txt
-
-# Run unit tests
-python -m pytest tests/unit/
-
-# Run integration tests (requires services running)
-python -m pytest tests/integration/
-
-# Run performance tests
-python -m pytest tests/performance/
-```
-
-### Test Coverage
-
-- Write tests for new features and bug fixes
-- Maintain test coverage above 80%
-- Include both unit and integration tests
-- Test edge cases and error conditions
 
 ## 📐 Code Style
 
@@ -275,4 +251,4 @@ Contributors will be recognized in:
 
 ---
 
-Thank you for contributing to the QuantaSearch Service! Your contributions help make document search and retrieval better for everyone. 🚀
+Thank you for contributing to the QuantaSearch. Your contributions help make document search and retrieval better for everyone. 🚀

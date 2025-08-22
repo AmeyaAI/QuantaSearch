@@ -1,3 +1,20 @@
+# -----------------------------------------------------------------------------
+# Copyright 2025 DPOD Labs Private Limited
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# -----------------------------------------------------------------------------
+
+
 import os
 import sys
 import json
@@ -55,6 +72,19 @@ class RabbitMQConsumer:
 
 
     async def process_message(self, message: aio_pika.IncomingMessage):
+        """
+        Process incoming upload messages from RabbitMQ queues.
+        
+        Handles both Draft and Publish upload operations, manages semaphore-based
+        concurrency control, and routes messages to appropriate workflow functions.
+        
+        Args:
+            message (aio_pika.IncomingMessage): Incoming RabbitMQ message with upload data
+            
+        Raises:
+            Exception: If message processing fails
+        """
+        
         async with message.process():
             common_datas = json.loads(message.body.decode('utf-8'))
             logger.info(f"Received message: {common_datas}")
@@ -84,6 +114,19 @@ class RabbitMQConsumer:
 
     
     async def delete_process(self, message: aio_pika.IncomingMessage):
+        """
+        Process incoming delete messages with progress streaming to reply queues.
+        
+        Handles file deletion operations, streams progress events to reply queues,
+        manages correlation IDs for response tracking, and handles error responses.
+        
+        Args:
+            message (aio_pika.IncomingMessage): Incoming RabbitMQ delete message
+            
+        Raises:
+            Exception: If delete processing fails
+        """
+        
         async with message.process():
             common_datas = json.loads(message.body.decode('utf-8'))
             logger.info(f"Received delete message: {common_datas}")
@@ -170,6 +213,16 @@ class RabbitMQConsumer:
 
 
     async def start_consuming(self):
+        """
+        Start consuming messages from RabbitMQ queues with connection resilience.
+        
+        Establishes connections, declares exchanges and queues, binds routing keys,
+        and starts concurrent consumption of upload and delete message queues.
+        
+        Raises:
+            Exception: If consumption setup fails
+        """
+        
         while True:
             try:
                 self.connection = await self.connect()
@@ -207,7 +260,27 @@ class RabbitMQConsumer:
 
 
 
-async def draft_function(obj,common_datas:dict, status:str="success", error:str="none"):
+async def draft_function(obj,common_datas:dict, status:str="success", error:str="none") -> tuple:
+    """
+    Process draft document upload workflow execution.
+    
+    Extracts parameters from message data, executes draft upload workflow,
+    handles success/failure status updates in user collection, and manages
+    error scenarios with appropriate status updates.
+    
+    Args:
+        obj: FileSearcherUpload workflow instance
+        common_datas (dict): Message data containing upload parameters
+        status (str, optional): Initial status. Defaults to "success"
+        error (str, optional): Initial error message. Defaults to "none"
+        
+    Returns:
+        tuple: (status, error) indicating operation outcome
+        
+    Raises:
+        Exception: If workflow execution fails
+    """
+    
     uid = common_datas.get("uid",None)
     realm = common_datas.get("realm",{})
     user_id = common_datas.get("user_id",None)
@@ -297,7 +370,27 @@ async def draft_function(obj,common_datas:dict, status:str="success", error:str=
         
         return status,error
 
-async def publish_function(obj, common_datas:dict, status:str="success", error:str="none"):
+async def publish_function(obj, common_datas:dict, status:str="success", error:str="none") -> tuple:
+    
+    """
+    Process publish document upload workflow execution.
+    
+    Extracts parameters from message data, executes publish upload workflow,
+    manages version control, handles status updates, and manages error scenarios.
+    
+    Args:
+        obj: FileSearcherUpload workflow instance
+        common_datas (dict): Message data containing upload parameters
+        status (str, optional): Initial status. Defaults to "success"
+        error (str, optional): Initial error message. Defaults to "none"
+        
+    Returns:
+        tuple: (status, error) indicating operation outcome
+        
+    Raises:
+        Exception: If workflow execution fails
+    """
+    
     uid = common_datas.get("uid",None)
     realm = common_datas.get("realm",{})
     user_id = common_datas.get("user_id",None)
@@ -385,6 +478,13 @@ async def publish_function(obj, common_datas:dict, status:str="success", error:s
         return status,error
 
 async def main():
+    """
+    Main entry point for the consumer application.
+    
+    Creates RabbitMQConsumer instance and starts the consumption process
+    for handling upload and delete operations.
+    """
+    
     consumer = RabbitMQConsumer()
     await consumer.start_consuming()
 
