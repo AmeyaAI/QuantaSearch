@@ -251,4 +251,4 @@ Contributors will be recognized in:
 
 ---
 
-Thank you for contributing to the QuantaSearch Service! Your contributions help make document search and retrieval better for everyone. 🚀
+Thank you for contributing to the QuantaSearch. Your contributions help make document search and retrieval better for everyone. 🚀
