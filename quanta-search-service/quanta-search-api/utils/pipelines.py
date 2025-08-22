@@ -23,6 +23,7 @@ async def get_insertable_data_pipeline(uid:str, realm:dict) -> list[dict]:
     less than 50 files (space for more insertions).
     
 <<<<<<< HEAD
+<<<<<<< HEAD
     
     
 async def load_vector_pipeline(vectotr_index_name:str, query_embed:list[float], filters:tuple, top_k:int,
@@ -218,6 +219,8 @@ async def get_insertable_data_pipeline(uid:str, realm:dict) -> list[dict]:
     
 =======
 >>>>>>> 8d43691 (Updated docstrings in every funcs)
+=======
+>>>>>>> aab2aa0 (Updated docstrings in every funcs)
     Args:
         uid (str): User identifier
         realm (dict): Realm filter parameters
