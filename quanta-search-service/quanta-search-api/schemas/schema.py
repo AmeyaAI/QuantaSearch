@@ -121,6 +121,10 @@ class DraftUpload(BaseModel):
 
         try:
             logger.info("Entered draft upload data......")
+            assert self.document_id, "document_id must not be empty."
+            assert self.user_id, "user_id must not be empty."
+            assert self.document_download_url, "document_download_url must not be empty."
+            assert self.uploaded_date, "uploaded_date must not be empty."
             assert type(self.document_download_url) == type(self.document_id), "document_id and documnet_download url must be of same type."
             
             if isinstance(self.document_download_url, list):
@@ -128,7 +132,7 @@ class DraftUpload(BaseModel):
             
         except Exception as e:
             logger.error("got document mismatch error......")
-            raise HTTPException(status_code=400, detail=f"document mismatch error {str(e)}")
+            raise HTTPException(status_code=400, detail=f"document mismatch error, {str(e)}")
          
         if r_keys and not self.realm:
             logger.error("got realm not be empty error......")
@@ -153,7 +157,7 @@ class PublishUpload(BaseModel):
     user_id : str
     realm : dict
     document_id : str | list
-    version_id : str
+    version_id : str | int
     published_date : str | int
     _extarction_mode: str = "default"
     _parser_type : str = PrivateAttr("docling")
@@ -172,6 +176,10 @@ class PublishUpload(BaseModel):
         
         try:
             logger.info("Entered publish upload data......")
+            assert self.document_id, "document_id must not be empty."
+            assert self.user_id, "user_id must not be empty."
+            assert self.document_download_url, "document_download_url must not be empty."
+            assert self.published_date, "published_date must not be empty."
             assert type(self.document_download_url) == type(self.document_id), "document_id and documnet_download url must be of same type."
             
             if isinstance(self.document_download_url, list):
@@ -181,7 +189,7 @@ class PublishUpload(BaseModel):
             
         except Exception as e:
             logger.error("got document mismatch error......")
-            raise HTTPException(status_code=400, detail=f"document mismatch error {str(e)}")
+            raise HTTPException(status_code=400, detail=f"document mismatch error, {str(e)}")
    
         if r_keys and not self.realm:
             logger.error("got realm not be empty error......")
@@ -204,6 +212,22 @@ class VersionChange(BaseModel):
     user_id : str 
     marked_latest_version : str | int
     version_change_date : str | int
+    
+    @model_validator(mode="after")
+    def validate_realm_keys(self):
+        
+        try:
+            logger.info("Entered version change data......")
+            assert self.document_id, "document_id must not be empty."
+            assert self.user_id, "user_id must not be empty."
+            assert self.marked_latest_version, "marked_latest_version must not be empty."
+            assert self.version_change_date, "version_change_date must not be empty."
+            
+        except Exception as e:
+            logger.error("got assertion error......")
+            raise HTTPException(status_code=400, detail=f"assertion error, {str(e)}")
+        
+        return self
 
 
 class DeleteFile(BaseModel):
@@ -212,6 +236,21 @@ class DeleteFile(BaseModel):
     user_id : str
     version_id : str | int | None = None
     state : str
+    
+    @model_validator(mode="after")
+    def validate_realm_keys(self):
+        
+        try:
+            logger.info("Entered delete file data......")
+            assert self.document_id, "document_id must not be empty."
+            assert self.user_id, "user_id must not be empty."
+            assert self.state, "version_change_date must not be empty."
+            
+        except Exception as e:
+            logger.error("got assertion error......")
+            raise HTTPException(status_code=400, detail=f"assertion error, {str(e)}")
+        
+        return self
 
 
 class Filelister(BaseModel):
@@ -220,6 +259,15 @@ class Filelister(BaseModel):
     
     @model_validator(mode="after")
     def validate_realm_keys(self):
+        
+        try:
+            logger.info("Entered file lister data......")
+            assert self.user_id, "user_id must not be empty."
+            
+        except Exception as e:
+            logger.error("got assertion error......")
+            raise HTTPException(status_code=400, detail=f"assertion error, {str(e)}")
+
 
         if self.realm and set(list(self.realm.keys())).difference(r_keys):
             raise HTTPException(status_code=406, detail="unsupported realm keys are given")
@@ -237,7 +285,16 @@ class QueryRequest(BaseModel):
     @model_validator(mode="after")
     def validate_realm_keys(self):
         
-        assert env.PREVIEW_LENGTH > 0, "The preview length must be greater than 0."
+        try:
+            logger.info("Entered Query request data......")
+            assert self.user_id, "user_id must not be empty."
+            assert self.query, "query must not be empty."
+            assert env.PREVIEW_LENGTH > 0, "The preview length must be greater than 0."
+            
+        except Exception as e:
+            logger.error("got assertion error......")
+            raise HTTPException(status_code=400, detail=f"assertion error, {str(e)}")
+        
         
         if self.realm and set(list(self.realm.keys())).difference(r_keys):
             raise HTTPException(status_code=406, detail="unsupported realm keys are given")
@@ -257,10 +314,14 @@ class PreviewBody(BaseModel):
     def validate_preview_body(self):
 
         try:
+            logger.info("Entered Query request data......")
+            assert self.user_id, "user_id must not be empty."
+            assert self.document_id, "document_id must not be empty."
+            assert self.query, "query must not be empty."
+            assert self.state, "state must not be empty."
             assert env.PREVIEW_LENGTH > 0, "The preview length must be greater than 0."
         
         except Exception as e:
             raise HTTPException(status_code=400, detail=f"preview length error {str(e)}")
 
         return self
-    

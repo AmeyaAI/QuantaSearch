@@ -125,7 +125,6 @@ async def draft_upload(draft_body: DraftUpload):
     """
     try:
         st = time.perf_counter()
-        
         status_code = 200
         error = None
 
@@ -145,8 +144,18 @@ async def draft_upload(draft_body: DraftUpload):
         raise HTTPException(status_code=500, detail=str(e))
 
     try:
-
+        
+        exists_ids = []
+        file_ids = []
+        
         for i, j, k in zip(file_names, documents_ids, download_urls):
+            dat = await db.user_collection.find_one({"uid": uid, "realm": draft_body.realm}, {"_id":1, "files":1})
+            
+            if dat and dat["files"].get(j, "") and 0 in dat["files"][j]["versions"]:
+                exists_ids.append(documents_ids)
+                continue
+            
+            file_ids.append(j)
             
             await add_queue(job={
                 "uid":uid,
@@ -165,7 +174,6 @@ async def draft_upload(draft_body: DraftUpload):
 
             })
             
-            dat = await db.user_collection.find_one({"uid": uid, "realm": draft_body.realm}, {"_id":1, "files":1})
             ins_point = await get_insertable_data(uid, draft_body.realm)
             doc_count_data = await db.user_collection.find_one({"uid":uid})
             doc_count_data = doc_count_data if doc_count_data else {}
@@ -201,9 +209,16 @@ async def draft_upload(draft_body: DraftUpload):
                 
         ed = time.perf_counter()
         logger.info(f"Time taken to complete the Draft upload api : {ed-st} seconds.")
-
-        return {"message":"Upload Successfull", "event_id": eid,
-                "file_event_ids": documents_ids, "event_status": "Processing"}
+        
+        if len(exists_ids) == len(documents_ids):
+            return {"message":"Uploaded files are already exists.", "event_id": eid,
+                    "file_event_ids": [], "event_status": "Success"}
+            
+        elif file_ids: 
+            return {"message":"Upload in Progress...", "event_id": eid,
+                    "file_event_ids": file_ids, "event_status": "Processing"}
+        else:
+            raise HTTPException(status_code=500, detail="Upload unsucessfull.")
             
     except Exception as e:
         
@@ -356,7 +371,18 @@ async def publish_upload(publish_body: PublishUpload):
    
     try:
         
+        exists_ids = []
+        file_ids = []
+        
         for i, j, k in zip(file_names, documents_ids, download_urls):
+            
+            dat = await db.user_collection.find_one({"uid": uid, "realm": publish_body.realm}, {"_id":1, "files":1})
+            
+            if dat and dat["files"].get(j, "") and publish_body.version_id in dat["files"][j]["versions"]:
+                exists_ids.append(documents_ids)
+                continue
+            
+            file_ids.append(j)
             
             await add_queue(job={
                 "uid":uid,
@@ -374,7 +400,6 @@ async def publish_upload(publish_body: PublishUpload):
                 "route_key":"doc_search_files.process"
             })
             
-            dat = await db.user_collection.find_one({"uid": uid, "realm": publish_body.realm}, {"_id":1, "files":1})
             ins_point = await get_insertable_data(uid, publish_body.realm)
             doc_count_data = await db.user_collection.find_one({"uid":uid})
             doc_count_data = doc_count_data if doc_count_data else {}
@@ -409,10 +434,17 @@ async def publish_upload(publish_body: PublishUpload):
                                                                 "version_change_date": None}}})
         
         ed = time.perf_counter()
-        logger.info(f"Time taken to complete the Publish upload api : {ed-st} seconds.")
-
-        return {"message":"Upload Successfull", "event_id": eid, 
-                "file_event_ids": documents_ids, "event_status": "Processing"}
+        logger.info(f"Time taken to complete the Draft upload api : {ed-st} seconds.")
+        
+        if len(exists_ids) == len(documents_ids):
+            return {"message":"Uploaded files are already exists.", "event_id": eid,
+                    "file_event_ids": [], "event_status": "Success"}
+            
+        elif file_ids: 
+            return {"message":"Upload in Progress...", "event_id": eid,
+                    "file_event_ids": file_ids, "event_status": "Processing"}
+        else:
+            raise HTTPException(status_code=500, detail="Upload unsucessfull.")
        
     except Exception as e:
         

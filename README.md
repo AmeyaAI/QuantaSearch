@@ -108,7 +108,7 @@ For detailed environment variable descriptions, default values, and advanced con
 
 ```bash
 # Clone the repository
-git clone https://github.com/AmeyaAI/QuantaSearch
+git clone https://github.com/AmeyaAI/QuantaSearch.git
 cd QuantaSearch
 ```
 ### Build and Start Services

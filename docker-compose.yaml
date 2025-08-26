@@ -9,11 +9,15 @@ services:
     user: root
 
     ports:
-      - 4455:4444
+      - 4455:4455
     
     volumes:
       - ./ameya-inverted-index:/app/ameya-inverted-index
       - ./quanta-search-service/quanta-search-api/temp:/app/temp
+      - ./quanta-search-service/quanta-search-api/router:/app/router
+      - ./quanta-search-service/quanta-search-api/schemas:/app/schemas
+      - ./quanta-search-service/quanta-search-api/utils:/app/utils
+
       
     
     networks:
@@ -33,7 +37,7 @@ services:
           
     restart: on-failure
 
-    command: "uvicorn main.api:app --host 0.0.0.0 --port 4444 --reload"
+    command: "uvicorn main.api:app --host 0.0.0.0 --port 4455 --reload"
 
   rabbitmq_pdf_parser_dev:
     image: rabbitmq:3.12.1-management
