@@ -34,6 +34,14 @@ async def create_mongodb_atlas_indexes(dim:int = 768):
 
     collection = db.vector_store
     user_collection = db.user_collection
+    
+    if not list(await collection.find({})):
+        await collection.update_one({"data":"dummy"})
+        await collection.delete_one({"data":"dummy"})
+        
+    if not list(await user_collection.find({})):
+        await user_collection.update_one({"data":"dummy"})
+        await user_collection.delete_one({"data":"dummy"})
 
     vs_model = SearchIndexModel(
         definition={
