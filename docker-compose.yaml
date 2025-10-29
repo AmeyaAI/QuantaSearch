@@ -18,6 +18,7 @@ services:
       - ./quanta-search-service/quanta-search-api/schemas:/app/schemas
       - ./quanta-search-service/quanta-search-api/utils:/app/utils
       - ./quanta-search-service/quanta-search-api/main:/app/main
+      - ./quanta-search-service/quanta-search-api/core:/app/core
     
     networks:
       - app_network

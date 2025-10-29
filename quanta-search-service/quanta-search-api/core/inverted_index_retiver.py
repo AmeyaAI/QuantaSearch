@@ -154,7 +154,7 @@ async def fetch_docs_optimized(doc_ids: list, filters: dict, query:str, batch_si
                           "relavence_score":"$sigmoidScore", "_id": 0, "text":1}}
                     ]
         else:
-            logger.debug(f"got on single else part")
+            logger.debug("got on single else part")
             logger.debug(f"the filters are : {filters}")
             flt = {"_id": {"$in": unique_ids}}
             flt.update(filters)
