@@ -38,7 +38,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-sub_app = FastAPI()
+sub_app = FastAPI(servers=[{"url": "http://localhost:4455/quantasearch/v1", "description": "Local dev"}])
 
 sub_app.add_middleware(
     CORSMiddleware,

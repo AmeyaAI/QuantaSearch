@@ -28,7 +28,7 @@ from llama_index.core.schema import TextNode, NodeWithScore, Document
 from utils.load_envs import env
 from logger.api_logger import logger
 
-supported_formats = [".pdf",".docx", ".doc", ".txt", ".csv", ".xls", ".xlsx"]
+supported_formats = [".pdf",".docx", ".doc", ".txt", ".csv", ".xls", ".xlsx", ".md", ".mdx"]
 
 if env.REALM_CONFIG_JSON_PATH:
     with open(env.REALM_CONFIG_JSON_PATH, "rb") as f:

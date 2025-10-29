@@ -315,7 +315,7 @@ class FileSearcher(Workflow):
         fl_score_len = len(file_scores)
         divider = sum(bool(out_docs[k]) for k in ["fts_index", "sp_index"]) or 1
         logger.debug(f"divider : {divider}")
-        logger.debug(f"Performing score assignment....")
+        logger.debug("Performing score assignment....")
         
         
         for key, val in file_scores.items():
@@ -393,7 +393,7 @@ class FileSearcherPreview(Workflow):
                     preview = sorted(preview, key=lambda x: x["page_no"])
                     
             else:
-                logger.warning(f"The docs is returned empty.")
+                logger.warning("The docs is returned empty.")
                 preview = []  
             ed = time.time()
             
