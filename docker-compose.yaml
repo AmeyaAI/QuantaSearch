@@ -59,6 +59,8 @@ services:
       - ./quanta-search-service/temp:/app/temp
       - ./quanta-search-service/quanta-search-consumer/core:/app/core
       - ./quanta-search-service/quanta-search-consumer/schemas:/app/schemas
+      - ./quanta-search-service/quanta-search-consumer/event_driven:/app/event_driven
+      - ./quanta-search-service/quanta-search-consumer/utils:/app/utils
 
     env_file:
       - ./.env
