@@ -47,7 +47,6 @@ async def create_mongodb_atlas_indexes(dim:int = 768):
             await db.index_meta_collection.insert_one({"data":"dummy"})
             await db.index_meta_collection.delete_one({"data":"dummy"})
 
-        print("\n\n\n\n", "adding index_models", "\n\n\n")
         vs_model = SearchIndexModel(
             definition={
                 "fields": [
@@ -104,17 +103,11 @@ async def create_mongodb_atlas_indexes(dim:int = 768):
             type="search",
         )
 
-        print("\n\n\n", "completed collecting index models....", "\n\n\n")
         avail_index= [i["name"] async for i in await collection.list_search_indexes()]
-        
-        print("\n\n\n", "listed indexs", "\n\n\n")
-        
         
         await collection.create_index({"metadata.uid": 1, "metadata.realm": 1,
                                     "metadata.document_id": 1, "metadata.version_id": 1,
                                     "metadata.state": 1})
-        
-        print("\n\n\n", "first compound created", "\n\n\n")
         
         await collection.create_index({"metadata.uid": 1, "metadata.state": 1, "metadata.document_id": 1,
                                     "metadata.realm.$**": 1})
