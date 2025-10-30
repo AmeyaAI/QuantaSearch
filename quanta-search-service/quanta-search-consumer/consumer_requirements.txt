@@ -25,7 +25,7 @@ pylatexenc==2.10
 cryptography==45.0.5
 packages/ameya_dataprocessing_core-0.0.21-py3-none-any.whl
 packages/ameya_parser_csv-0.1.0b1-py3-none-any.whl
-packages/ameya_parser_doc-0.1.0b1-py3-none-any.whl
+packages/ameya_parser_doc-0.1.1b1-py3-none-any.whl
 packages/ameya_parser_pdf-0.1.0b1-py3-none-any.whl
 packages/ameya_parser_txt-0.1.0b1-py3-none-any.whl
 packages/ameya_parser_excel-0.1.0b1-py3-none-any.whl
