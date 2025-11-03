@@ -160,7 +160,7 @@ async def get_file_status(uid:str, document_id:str) -> str:
     """
     
     res = await db.user_collection.find_one({"uid": uid, f"files.{document_id}": {"$exists":True}}, {"files":1})
-    return res["files"][document_id].get("status", "Not Found")
+    return res["files"][document_id].get("status", "Not Found") if res else "Not Found"
 
 
 def compute_score(doc_count, estimated_max=1000, base_score=0.7) -> float:

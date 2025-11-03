@@ -1,20 +1,24 @@
+# Docker Compose file for Quantasearch
 services:
 
+  # For api service
   doc-search-service:
-    container_name: quanta_search_api
+    container_name: quanta_search_api # Name of the container
     build:
-      context: ./quanta-search-service/quanta-search-api
-      dockerfile: doc-api.Dockerfile
-    
-    user: root
-
+      context: ./quanta-search-service/quanta-search-api # DockerFile folder path
+      dockerfile: doc-api.Dockerfile # Name of the DockerFile
+    user: root # user with root permission
     ports:
-      - 4455:4444
+      - 4455:4455 # Exposed ports
     
     volumes:
-      - ./ameya-inverted-index:/app/ameya-inverted-index
-      - ./quanta-search-service/quanta-search-api/temp:/app/temp
-      
+      - ./ameya-inverted-index:/app/ameya-inverted-index # Index DB volume
+      - ./quanta-search-service/quanta-search-api/temp:/app/temp # Temp folder for logs
+      - ./quanta-search-service/quanta-search-api/router:/app/router
+      - ./quanta-search-service/quanta-search-api/schemas:/app/schemas
+      - ./quanta-search-service/quanta-search-api/utils:/app/utils
+      - ./quanta-search-service/quanta-search-api/main:/app/main
+      - ./quanta-search-service/quanta-search-api/core:/app/core
     
     networks:
       - app_network
@@ -31,42 +35,10 @@ services:
           cpus: '1.0'
           memory: 1G
           
-    restart: on-failure
-
-    command: "uvicorn main.api:app --host 0.0.0.0 --port 4444 --reload"
-
-  rabbitmq_pdf_parser_dev:
-    image: rabbitmq:3.12.1-management
-    container_name: quanta_search_rabbitmq
     restart: always
-    ports:
-      - "5679:5672"
-      - "15769:15672"
+    command: "uvicorn main.api:app --host 0.0.0.0 --port 4455 --reload"
 
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-
-    networks:
-      - app_network
-
-
-  redis_service:
-    image: redis:alpine
-    container_name: quanta_search_redis
-
-    ports:
-      - 6382:6379
-
-    networks:
-      - app_network
-    command: redis-server --appendonly yes
-    restart: always
-
-
+    # Consumer Service for Quantasearch
   docsearch_consumer_opensource:
     build:
         context: ./quanta-search-service/quanta-search-consumer
@@ -85,6 +57,10 @@ services:
     volumes:
       - ./ameya-inverted-index:/app/ameya-inverted-index
       - ./quanta-search-service/temp:/app/temp
+      - ./quanta-search-service/quanta-search-consumer/core:/app/core
+      - ./quanta-search-service/quanta-search-consumer/schemas:/app/schemas
+      - ./quanta-search-service/quanta-search-consumer/event_driven:/app/event_driven
+      - ./quanta-search-service/quanta-search-consumer/utils:/app/utils
 
     env_file:
       - ./.env
@@ -93,16 +69,44 @@ services:
     networks:
       - app_network
 
+  # RabbitMQ Service
+  rabbitmq_pdf_parser_dev:
+    image: rabbitmq:3.12.1-management
+    container_name: quanta_search_rabbitmq
+    restart: always
+    ports:
+      - "5679:5672"
+      - "15769:15672"
+
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+    networks:
+      - app_network
+
+  # Redis Service for Cache
+  redis_service:
+    image: redis:alpine
+    container_name: quanta_search_redis
+
+    ports:
+      - 6382:6379
+
+    networks:
+      - app_network
+    command: redis-server --appendonly yes
+    restart: always
+
 volumes:
   rabbitmq_data:
     driver: local
-  
   redis_data:
     driver: local
 
-
 networks:
-    prod_audit_network:
-        external: true
     app_network:
         external: true

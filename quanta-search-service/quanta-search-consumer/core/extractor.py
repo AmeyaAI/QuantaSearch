@@ -16,11 +16,16 @@
 
 
 import os
+import uuid
+from datetime import datetime
 from urllib.parse import unquote
 
 from utils.util import _get_job_data
+from schemas.schema import supported_formats
+from llama_index.core.schema import Document
 
-from ameya_dataprocessing.core.files.schema import Job
+from ameya_dataprocessing.core.files.utils import add_metadata
+from ameya_dataprocessing.core.files.schema import Job, ParserUsage
 from ameya_dataprocessing.parsers.pdf.extractors import PDFExtractor
 from ameya_dataprocessing.parsers.txt.extractors import TxtExtractor
 from ameya_dataprocessing.parsers.csv.extractors import CsvExtractor
@@ -44,7 +49,7 @@ class FileExtractors:
         self.doc_extract = DocsExtractor()
         self.excel_extract = ExcelExtractor()
     
-    async def aload_data(self, file_path:str, file_name:str, checksum:str):
+    async def aload_data(self, file_path:str, file_name:str, checksum:str, url:str):
         """
         Asynchronously load and extract data from various file formats.
         
@@ -55,6 +60,7 @@ class FileExtractors:
             file_path (str): Path or URL to the file to be processed
             file_name (str): Name of the file for identification
             checksum (str): File checksum for integrity verification
+            url: (str): The url of the file.
             
         Returns:
             list: Extracted document objects from the file
@@ -65,7 +71,7 @@ class FileExtractors:
         """
         
         _, ext = os.path.splitext(unquote(os.path.split(file_path.split("?")[0])[-1]))
-        assert ext in [".pdf", ".docx", ".doc", ".xlsx", ".xls", ".csv", ".txt"], "Unsupported extension is given."
+        assert ext in supported_formats, "Unsupported extension is given."
         
         if ext == ".pdf":
             job_data = Job.model_validate(_get_job_data())
@@ -76,6 +82,9 @@ class FileExtractors:
             job_data.checksums = {file_name: checksum}
             
             docs = await self.pdf_extract.extract(job_data)
+            
+            for i in docs:
+                i.metadata["file_path"] = url
         
         elif ext == ".csv":
             job_data = Job.model_validate(_get_job_data())
@@ -86,6 +95,9 @@ class FileExtractors:
             job_data.checksums = {file_name: checksum}
             
             docs = await self.csv_extract.extract(job_data)
+            
+            for i in docs:
+                i.metadata["file_path"] = url
         
         elif ext == ".txt":
             job_data = Job.model_validate(_get_job_data())
@@ -96,6 +108,9 @@ class FileExtractors:
             job_data.checksums = {file_name: checksum}
             
             docs = await self.txt_extract.extract(job_data)
+            
+            for i in docs:
+                i.metadata["file_path"] = url
         
         elif ext in [".docx", ".doc"]:
             job_data = Job.model_validate(_get_job_data())
@@ -106,6 +121,9 @@ class FileExtractors:
             job_data.checksums = {file_name: checksum}
             
             docs = await self.doc_extract.extract(job_data)
+            
+            for i in docs:
+                i.metadata["file_path"] = url
         
         elif ext in [".xlsx", ".xls"]:
             job_data = Job.model_validate(_get_job_data())
@@ -116,5 +134,23 @@ class FileExtractors:
             job_data.checksums = {file_name: checksum}
             
             docs = await self.excel_extract.extract(job_data)
+            
+            for i in docs:
+                i.metadata["file_path"] = url
+        
+        elif ext in [".md", ".mdx"]:
+            with open(file_path, "r") as f:
+                data = f.read()
+                
+            job_id = str(uuid.uuid4())
+            file_stat = os.stat(file_path)
+                
+            meta = {"file_name": file_name, "file_path": url, "file_type": "text/text",
+                    "file_size": file_stat.st_size, "creation_date": datetime.now(),
+                    "last_modified_date": datetime.now(),
+                    "correlation_id": job_id, "job_id": job_id,
+                    "checksum": checksum, "usage": ParserUsage(llama_parse_per_page_credits=0)}
+            
+            docs = [Document(text=data, metadata=meta)]
         
         return docs

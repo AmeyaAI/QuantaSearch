@@ -108,9 +108,14 @@ For detailed environment variable descriptions, default values, and advanced con
 
 ```bash
 # Clone the repository
-git clone https://github.com/AmeyaAI/QuantaSearch
+git clone https://github.com/AmeyaAI/QuantaSearch.git
 cd QuantaSearch
 ```
+### Create a New Docker Network
+```bash
+docker network create app_network
+```
+
 ### Build and Start Services
 ```bash
 docker compose up -d --build

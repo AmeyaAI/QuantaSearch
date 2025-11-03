@@ -130,7 +130,7 @@ class FileSearcherUpload(Workflow):
     async def parse_file(self, ctx:Context, ev:FileParseEvent) -> MetaUpdateEvent | StopEvent:
         """This step is used to parse the files from the directory."""
         
-        logger.info(f"Started initial file parse event.........")
+        logger.info("Started initial file parse event.........")
         try:
             assert os.path.isdir(ev.dir_path) and os.path.exists(ev.dir_path), "The dir_path must be a path to the directory and exists."
             
@@ -141,7 +141,7 @@ class FileSearcherUpload(Workflow):
             for j in ev.file_urls:
                 logger.debug(f"Processing '{j['file_path']}' file for uid: {ev.uid}.")
                 
-                d_cs = await extractor.aload_data(j["file_path"], j["file_name"], j["checksum"])
+                d_cs = await extractor.aload_data(j["file_path"], j["file_name"], j["checksum"], j["url"])
                 
                 logger.debug(f"Completed processing '{j['file_path']}' file for uid: {ev.uid}.")
                 
@@ -168,7 +168,7 @@ class FileSearcherUpload(Workflow):
                 return StopEvent(result=(False, "There is no documents extracted for the uploaded file. Please reupload the file.", None))
 
 
-            logger.info(f"Completed parsing the files from the directory.")
+            logger.info("Completed parsing the files from the directory.")
             
             if ev.state == "Draft":
                 return MetaUpdateEvent(docs=docs, uid=ev.uid, version_id=ev.version_id,
@@ -199,7 +199,7 @@ class FileSearcherUpload(Workflow):
     async def meta_update(self, ctx:Context, ev:MetaUpdateEvent) -> UserCollectionUpdateEvent | StopEvent:
         """This step is used to add the metadata to the documents."""
         
-        logger.info(f"Started metadata update event.........")
+        logger.info("Started metadata update event.........")
         
         try:
             for k,v in ev.file_meta.items():
@@ -218,11 +218,11 @@ class FileSearcherUpload(Workflow):
             
             docs = [ut.add_metadata(i, ev) for i in ev.docs]
             
-            logger.debug(f"Completed metadata update event.")
+            logger.debug("Completed metadata update event.")
             logger.debug(f"The len of docs ---------> {len(docs)}")
         
             if not docs:
-                logger.error(f"Thers is no docs to process.")
+                logger.error("Thers is no docs to process.")
                 return StopEvent(result=(False, "Thers is no docs to process.", None))
             
             return UserCollectionUpdateEvent(docs=docs, uid=ev.uid, state=ev.state, version_id=ev.version_id,
@@ -304,7 +304,7 @@ class FileSearcherUpload(Workflow):
                         logger.info("Updated user data in user_collection.")
                     
                     else:
-                        logger.error(f"Thers is no docs to update the collection.")
+                        logger.error("Thers is no docs to update the collection.")
                         return StopEvent(result=(False, "Thers is no docs to update the collection.", None))
                 
             await ctx.set("file_meta", ev.file_meta)
@@ -321,7 +321,7 @@ class FileSearcherUpload(Workflow):
     async def vector_upload(self, ctx:Context, ev:VectorUploadEvent) -> IndexUpdateEvent | StopEvent:
         """This step is used to create the vector index from the documents."""
         
-        logger.info(f"Started vector upload event.........")
+        logger.info("Started vector upload event.........")
 
         try:
             docs = []
@@ -342,7 +342,7 @@ class FileSearcherUpload(Workflow):
 
             if ret.acknowledged:
                 logger.debug(f"Total documents uploaded: {len(ret.inserted_ids)}")
-                logger.info(f"Completed vector upload event.")
+                logger.info("Completed vector upload event.")
                 
                 try:
                     await cache.delete_one(ev.uid)
@@ -353,7 +353,7 @@ class FileSearcherUpload(Workflow):
             
             else:
                 logger.error(f"Error in the vector upload event. Error: {ret}")
-                return StopEvent(result=(False, f"Upload Failed.", None))
+                return StopEvent(result=(False, "Upload Failed.", None))
         
         except Exception as e:
             logger.error(f"Error in the vector upload event. Error: {e.__class__.__name__} :- {str(e)}")
@@ -363,12 +363,12 @@ class FileSearcherUpload(Workflow):
     async def update_index(self, ctx:Context, ev:IndexUpdateEvent) -> StopEvent:
         """This step is used to update the local index."""
         
-        logger.info(f"Started Index update event.........")
+        logger.info("Started Index update event.........")
 
         try:
             file_meta = await ctx.get("file_meta", None)
             optimize = False
-            logger.debug(f"Fetching Index stats.........")
+            logger.debug("Fetching Index stats.........")
             logger.debug(f"ids_list : {ev.ids}")
             cache_last_id = await cache.find_one("last_index_id")
             
@@ -412,7 +412,7 @@ class FileSearcherUpload(Workflow):
                     optimize = True
                 
                 logger.debug(f"Index stats : doc_count: {_stat} ")
-                logger.debug(f"Adding documents to index.........")
+                logger.debug("Adding documents to index.........")
 
                 docs = [(_stat + idx + 1, {"content": i["text"], "title":i["_id"]})
                         for idx, i in enumerate(ev.docs)
@@ -422,19 +422,19 @@ class FileSearcherUpload(Workflow):
     
                 docs_len = len(docs)
                 if docs_len > 200:
-                    logger.debug(f"Using parallel index with batch as 100....")
+                    logger.debug("Using parallel index with batch as 100....")
                     index.add_documents_with_fields_parallel(docs, num_threads=4, batch_size=50)
                     
                 elif docs_len > 50:
-                    logger.debug(f"Using parallel index with batch as 25....")
+                    logger.debug("Using parallel index with batch as 25....")
                     index.add_documents_with_fields_parallel(docs, num_threads=4, batch_size=25)
                 
                 elif docs_len > 25:
-                    logger.debug(f"Using parallel index with batch as 10....")
+                    logger.debug("Using parallel index with batch as 10....")
                     index.add_documents_with_fields_parallel(docs, num_threads=4, batch_size=10)
                 
                 else:
-                    logger.debug(f"Using non-parallel indexing....")
+                    logger.debug("Using non-parallel indexing....")
                     for i in docs:
                         index.add_document_with_fields(*i)
                         
@@ -448,27 +448,27 @@ class FileSearcherUpload(Workflow):
             logger.debug(f"The index meta is {im_data}")
             
             if im_data:
-                logger.debug(f"updating index meta......")
+                logger.debug("updating index meta......")
                 await db.index_meta_collection.update_one({"_id":im_data["_id"]},
                                                           {"$set": {"last_mongo_id": ev.ids[-1],
                                                                     "last_index_id": docs[-1][0],
                                                                     "modified_time": datetime.now()}})
-                logger.debug(f"updated index meta.")
+                logger.debug("updated index meta.")
             else:
-                logger.debug(f"Creating index meta......")
+                logger.debug("Creating index meta......")
                 await db.index_meta_collection.insert_one({"last_mongo_id": ev.ids[-1],
                                                            "last_index_id": docs[-1][0],
                                                            "backup_name": backup_name,
                                                            "modified_time": datetime.now()})
-                logger.debug(f"Created index meta")
+                logger.debug("Created index meta")
                 
             if store_index:
-                logger.debug(f"Storing The index to cloud........")
+                logger.debug("Storing The index to cloud........")
                 await ut.store_index(backup_name)
-                logger.debug(f"Stored index to cloud.")
+                logger.debug("Stored index to cloud.")
             
             await cache.insert_one("last_index_id", docs[-1][0])
-            logger.debug(f"Successfully added documents to index.")
+            logger.debug("Successfully added documents to index.")
             return StopEvent(result=(True, "Upload Successfull.", file_meta))
                
         except Exception as e:
@@ -485,7 +485,7 @@ class DeleteFile(Workflow):
     async def delete_file(self, ctx:Context, ev:StartEvent) -> StopEvent:
         """This step is used to delete the file from the vector database."""
         
-        logger.info(f"Started deleting the file.........")  
+        logger.info("Started deleting the file.........")  
 
         try:
             
@@ -504,7 +504,7 @@ class DeleteFile(Workflow):
                     ev.version_id = 0
 
                 assert ev.version_id in versions, f"Version_id not found. Please Publish the document with the new version_id : {ev.version_id}."
-                assert ev.version_id != cur_version, f"Cannot delete the current latest version."
+                assert ev.version_id != cur_version, "Cannot delete the current latest version."
                 
                 if ev.version_id == 0 and ev.state != "Draft":
                     raise AssertionError(f"There is no version named {ev.version_id} in the {ev.state} document.")
@@ -555,7 +555,7 @@ class DeleteFile(Workflow):
                     
                     if data["files"]:
                         await db.user_collection.update_one({"_id": data["_id"]},
-                                                            {"$set": {f"files": data["files"]}})
+                                                            {"$set": {"files": data["files"]}})
                     else:
                         await db.user_collection.delete_one({"_id": data["_id"]})
 
@@ -594,7 +594,7 @@ class DeleteFile(Workflow):
                         logger.debug(f"data in the docs after delete : {len(__data)}")
                         logger.debug(f"The last index id: {_stat}")
                     
-                except Exception as e:
+                except Exception:
                     pass
                 
                 ctx.write_event_to_stream(ProgressEvent(msg="Successfully deleted data from vector store."))
@@ -612,7 +612,7 @@ class DeleteFile(Workflow):
                 else:
                     await db.user_collection.delete_one({"_id": data["_id"]})
 
-                logger.debug(f"Successfully removed the file from user_collection.")
+                logger.debug("Successfully removed the file from user_collection.")
                 ctx.write_event_to_stream(ProgressEvent(msg="Removed the file from user_collection."))
                 
             elif not versions:
@@ -632,10 +632,10 @@ class DeleteFile(Workflow):
                 else:
                     await db.user_collection.delete_one({"_id":data["_id"]})
                     
-                logger.debug(f"Successfully removed the file from user_collection.") 
+                logger.debug("Successfully removed the file from user_collection.") 
                 ctx.write_event_to_stream(ProgressEvent(msg="Removed the file from user_collection."))
 
-            logger.info(f"Completed deleting the file.")
+            logger.info("Completed deleting the file.")
             ctx.write_event_to_stream(ProgressEvent(msg="Completed deleting the file."))
             
             try:

@@ -20,7 +20,8 @@ from typing import Any
 from llama_index.core.workflow import Event
 from llama_index.core.schema import TextNode, NodeWithScore, Document
 
-supported_formats = [".pdf",".docx", ".doc", ".txt", ".csv", ".xls", ".xlsx"]
+supported_formats = [".pdf", ".docx", ".doc", ".txt", ".csv", ".xls", ".xlsx", ".md", ".mdx"]
+                    
 
 
 ###################################################################################################

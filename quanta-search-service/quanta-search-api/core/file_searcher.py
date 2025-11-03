@@ -33,7 +33,7 @@ from utils.load_envs import env
 from logger.logger import logger
 from core.mongo_vector import create_mongodb_atlas_indexes
 from core.inverted_index_retiver import index_retriver, fetch_docs_optimized
-from core.file_preview import process_texts, get_preview_docs, find_occurrences
+from core.file_preview import process_texts, get_preview_docs
 from utils.pipelines import get_list_files_pipeline
 
 from fast_inverted_index import (
@@ -64,14 +64,19 @@ schema.set_default_field("content")
 
     
 async def index_lister():
-    return [i async for i in await db.vector_store.list_search_indexes()]
+    return [i["name"] async for i in await db.vector_store.list_search_indexes()] == ["fts_index", "vector_index", "sp_index"]
 
-if asyncio.run(index_lister()):
-    asyncio.run(create_mongodb_atlas_indexes(1536))
-    logger.info("Completed creating indexes.")
-else:
-    logger.error("Failed to create indexes.")
-    raise Exception("Failed to create indexes.")
+try:
+    dt = asyncio.run(index_lister())
+    if not dt:
+        asyncio.run(create_mongodb_atlas_indexes(1536))
+        logger.info("Completed creating indexes.")
+    elif dt:
+        logger.info("Skipping Index creation")
+        
+except Exception as e:
+    logger.error(f"Failed to create indexes. Error: {str(e)}")
+    raise Exception(f"Failed to create indexes. Error: {str(e)}")
 
 
 
@@ -121,7 +126,7 @@ class MetaUpdater(Workflow):
     @step(num_workers=5)
     async def update_meta(self, ev:StartEvent) -> StopEvent:
         """This step is used to update the metadata of the documents."""
-        logger.info(f"Started metadata update event.........")
+        logger.info("Started metadata update event.........")
 
         try:
             logger.debug("Checking version and realm creaditability........")
@@ -133,7 +138,7 @@ class MetaUpdater(Workflow):
             if cur_version == ev.latest_version:
                 return StopEvent(result=(True, "Skipping the version change as the current version is same as the latest version."))
 
-            assert cur_version is not None or versions, f"There is no current version selected, please publish file to set current version. You must need atleast 1 published file to change versions."
+            assert cur_version is not None or versions, "There is no current version selected, please publish file to set current version. You must need atleast 1 published file to change versions."
             assert ev.latest_version in versions, f"Version_id not found. Please upload the document with the new version_id : {ev.latest_version}."
 
             logger.debug("Completed version creaditability.")
@@ -315,7 +320,7 @@ class FileSearcher(Workflow):
         fl_score_len = len(file_scores)
         divider = sum(bool(out_docs[k]) for k in ["fts_index", "sp_index"]) or 1
         logger.debug(f"divider : {divider}")
-        logger.debug(f"Performing score assignment....")
+        logger.debug("Performing score assignment....")
         
         
         for key, val in file_scores.items():
@@ -393,7 +398,7 @@ class FileSearcherPreview(Workflow):
                     preview = sorted(preview, key=lambda x: x["page_no"])
                     
             else:
-                logger.warning(f"The docs is returned empty.")
+                logger.warning("The docs is returned empty.")
                 preview = []  
             ed = time.time()
             

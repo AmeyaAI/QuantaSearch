@@ -67,7 +67,7 @@ async def download_from_presigned(presigned_url:list[str], uid:str, document_ids
 
             uploaded_files.append({"file_path": os.path.join(cwd, "temp_download", uid, event_id, file_name), 
                                    "dir_path": os.path.join(cwd, "temp_download", uid, event_id),
-                                   "checksum": hasher.hexdigest(), "file_name": file_name,
+                                   "checksum": hasher.hexdigest(), "file_name": file_name, "url": i,
                                    "status":"success", "error":None})
             
             file_meta[file_name] = {"document_id": document_ids[idx]}
@@ -75,7 +75,7 @@ async def download_from_presigned(presigned_url:list[str], uid:str, document_ids
         except Exception as e:
             uploaded_files.append({"file_path": os.path.join(cwd, "temp_download", uid, event_id, file_name), 
                                    "dir_path": os.path.join(cwd, "temp_download", uid, event_id),
-                                   "checksum": "", "file_name": file_name,
+                                   "checksum": "", "file_name": file_name, "url": i,
                                    "status":"fail", "error":f"{e.__class__.__name__} : {str(e)}"})
             
     return uploaded_files, file_meta

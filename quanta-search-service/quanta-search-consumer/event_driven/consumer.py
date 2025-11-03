@@ -42,7 +42,7 @@ logging.getLogger("logger.logger").setLevel(logging.DEBUG)
 
 class RabbitMQConsumer:
     def __init__(self, ds_upload_timeout=3600.0):
-        self.upload_obj = FileSearcherUpload(timeout=ds_upload_timeout)
+        self.upload_obj = FileSearcherUpload(timeout=None)
         self.delete_obj = DeleteFile(timeout=ds_upload_timeout/10)
         self.connection = None
         self.channel = None
@@ -58,7 +58,7 @@ class RabbitMQConsumer:
                 self.connection = await aio_pika.connect_robust(
                     host=env.RABBIT_HOST,
                     port=int(env.RABBIT_PORT),
-                    heartbeat=600,
+                    heartbeat=60000,
                     connection_attempts=5,
                     retry_delay=0.5,
                 )
@@ -91,17 +91,17 @@ class RabbitMQConsumer:
             
             state = common_datas.get("state",None)
             status,error = "fail","un-known error"
-            path = ""
-            st = time.perf_counter()
+            _path = ""
+            _st = time.perf_counter()
             
             try:
                 async with self.semaphore:
                     if state and state.lower() == "draft":
-                        path = "/function/managedocuments/adddraftdocument/event/documentsearch_draft_upload"
+                        _path = "/function/managedocuments/adddraftdocument/event/documentsearch_draft_upload"
                         status,error = await draft_function(obj = self.upload_obj,status=status,error=error,common_datas = common_datas)   
 
                     elif state and state.lower() == "publish":
-                        path ="/function/managedocuments/addpublisheddocument/event/documentsearch_publish_upload"
+                        _path ="/function/managedocuments/addpublisheddocument/event/documentsearch_publish_upload"
                         status,error = await publish_function(obj = self.upload_obj,status=status,error=error,common_datas = common_datas)
 
                     else :
@@ -176,7 +176,7 @@ class RabbitMQConsumer:
                                     routing_key=reply_to,
                                 )
 
-                result = await handler
+                _result = await handler
 
                 done_response = {"type": "progress", "data": {"msg": "", "done": True}}
                 logger.debug(f"Progress_response : {done_response}")
@@ -346,11 +346,11 @@ async def draft_function(obj,common_datas:dict, status:str="success", error:str=
             
             
         elif not ret and result == "AssertionError :- realm attributes does not match or no data to process.":
-            logger.debug(f"Error triggered")           
+            logger.debug("Error triggered")           
             raise Exception("AssertionError :- realm attributes does not match or no data to process.")
         
         else:
-            logger.debug(f"Error triggered") 
+            logger.debug("Error triggered") 
             raise Exception(str(result))
 
     except Exception as e:
@@ -453,11 +453,11 @@ async def publish_function(obj, common_datas:dict, status:str="success", error:s
             
                 
         elif not ret and result == "AssertionError :- realm attributes does not match or no data to process.":
-            logger.debug(f"Error triggered")          
+            logger.debug("Error triggered")          
             raise Exception("AssertionError :- realm attributes does not match or no data to process.")
         
         else:
-            logger.debug(f"Error triggered") 
+            logger.debug("Error triggered") 
             raise Exception(str(result))
         
 
